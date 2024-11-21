@@ -1,64 +1,28 @@
-import {el} from "./lib/elements.js";
+import { fetcher } from './lib/fetcher.js';
+import { renderContentPage } from './lib/pages/content-page.js';
+import { renderIndexPage } from './lib/pages/index-page.js';
+import { renderSubpage } from './lib/pages/sub-page.js';
 
-async function fetchIndex(){
-    const file ='./index.json';
+async function render(root, querystring) {
+  const mainIndexJson = await fetcher('data/index.json');
 
-    const response =await fetch(file);
-    const json=await response.json();
-    
-    return json;
+  const params = new URLSearchParams(querystring);
+  const type = params.get('type');
+  const content = params.get('content');
+
+  console.log(type, content);
+
+  if (!type) {
+    return renderIndexPage(root, mainIndexJson);
+  }
+
+  if (content) {
+    return renderContentPage(root, mainIndexJson);
+  }
+
+  renderSubpage(root, mainIndexJson, type);
 }
 
-function renderNavigation(navigation){
-    /*
-<nav>
-<a href="${url}">${title}</a>
-<a href="${url}">${title}</a>
-<a href="${url}">${title}</a>
-</nav>
+const root = document.querySelector('#app');
 
-*/ 
-    const navigationElement=el('ul',{class:'navigation__list'});
-for(const item of navigation){
-    
-    const{title ,slug}=item;
-   const href='#${slug}';
-    const navItemElement=el('li',{class:'navigation__item'},el('a',{href,class:'navigation__link'},title));
-    navigationElement.appendChild(navItemElement);
-}
-
-return el('nav',{class:'navigation'},navigationElement)
-    
-}
-
-async function render(root){
-    const indexJson =await fetchIndex();
-    console.log('rendering',root, indexJson.title);
-    
-    
-    
-    const headerElement =el('header',{},el('h1',{},indexJson.title)) ;
-
-  
-
-headerElement.appendChild(renderNavigation(indexJson.navigation));
-
-/*
-<nav>
-<a href="${url}">${title}</a>
-*/
-
-    
-const mainElement =el('main',{},el('h2',{},el('section',{},el('p',{},indexJson.description)),));
-const footerElement=el('footer',{},indexJson.footer)
-   root.appendChild(headerElement);
-   root.appendChild(mainElement)
-   root.appendChild(footerElement);
-
-}
-
-
-
-const root =document.querySelector('#app');
-
-render(root);
+render(root, window.location.search);

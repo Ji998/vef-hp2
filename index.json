@@ -1,7 +1,12 @@
 {
   "title": "Vefforritunarvefurinn",
-  "description": "Efni um vefforritun.Ser i lagi html,CSS,JavaScript",
+  "description": "Efni um vefforritun.Ser i lagi html,CSS,JavaScript. Veldur hvaða efni thu vilt skoda her ad nedan",
   "navigation": [
+    
+    {
+"title": "Forsíða",
+      "slug": ""
+    },
     {
       "title": "HTML",
       "slug": "html"
