@@ -4,13 +4,10 @@ import { renderIndexPage } from './lib/pages/index-page.js';
 import { renderSubpage } from './lib/pages/sub-page.js';
 
 async function render(root, querystring) {
-  const mainIndexJson = await fetcher('data/index.json');
-
+  const mainIndexJson = await fetcher('/index.json');
   const params = new URLSearchParams(querystring);
   const type = params.get('type');
   const content = params.get('content');
-
-  console.log(type, content);
 
   if (!type) {
     return renderIndexPage(root, mainIndexJson);
@@ -24,5 +21,7 @@ async function render(root, querystring) {
 }
 
 const root = document.querySelector('#app');
-
+window.addEventListener('popstate', () => {
+  render(root, window.location.search);
+});
 render(root, window.location.search);
