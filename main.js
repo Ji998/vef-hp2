@@ -9,13 +9,8 @@ async function fetchIndex(){
     return json;
 }
 
-
-
-async function render(root){
-    const indexJson =await fetchIndex();
-    console.log('rendering',root, indexJson.title);
-   
-/*
+function renderNavigation(navigation){
+    /*
 <nav>
 <a href="${url}">${title}</a>
 <a href="${url}">${title}</a>
@@ -23,18 +18,35 @@ async function render(root){
 </nav>
 
 */ 
-const headerElement =el('header',{},el('h1',{},indexJson.title)) ;  
-const navigationElement=el('nav',{});
-
-for(const item of indexJson.navigation){
+    const navigationElement=el('ul',{class:'navigation__list'});
+for(const item of navigation){
+    
     const{title ,slug}=item;
    const href='#${slug}';
-    const navItemElement=el('a',{href},title);
+    const navItemElement=el('li',{class:'navigation__item'},el('a',{href,class:'navigation__link'},title));
     navigationElement.appendChild(navItemElement);
 }
-headerElement.appendChild(navigationElement);
 
+return el('nav',{class:'navigation'},navigationElement)
+    
+}
 
+async function render(root){
+    const indexJson =await fetchIndex();
+    console.log('rendering',root, indexJson.title);
+    
+    
+    
+    const headerElement =el('header',{},el('h1',{},indexJson.title)) ;
+
+  
+
+headerElement.appendChild(renderNavigation(indexJson.navigation));
+
+/*
+<nav>
+<a href="${url}">${title}</a>
+*/
 
     
 const mainElement =el('main',{},el('h2',{},el('section',{},el('p',{},indexJson.description)),));
